@@ -1,13 +1,14 @@
+const vuxLoader = require('vux-loader')
 module.exports = {
     //部署应用时的基本 URL。默认情况下，Vue CLI 会假设你的应用是被部署在一个域名的根路径上，
     //例如 https://www.my-app.com/。如果应用被部署在一个子路径上，你就需要用这个选项指定这个子路径。
     //例如，如果你的应用被部署在 https://www.my-app.com/my-app/，则设置 baseUrl 为 /my-app/。
     //这个值在开发环境下同样生效。如果你想把开发服务器架设在根路径，你可以使用一个条件式的值
-    baseUrl: process.env.NODE_ENV === 'production' ? '/vue-cli3-test/' : '/',
+    baseUrl: process.env.NODE_ENV === 'production' ? './' : '/',
 
     //当运行 vue-cli-service build 时生成的生产环境构建文件的目录。
     //注意目标目录在构建之前会被清除 (构建时传入 --no-clean 可关闭该行为)。
-    outputDir: 'build',
+    outputDir: 'dist',
 
     //放置生成的静态资源 (js、css、img、fonts) 的 (相对于 outputDir 的) 目录
     assetsDir: 'static',
@@ -88,6 +89,11 @@ module.exports = {
     //那就换成一个函数 (该函数会在环境变量被设置之后懒执行)。
     //该方法的第一个参数会收到已经解析好的配置。在函数内，你可以直接修改配置，或者返回一个将会被合并的对象：
     configureWebpack: config => {
+
+        vuxLoader.merge(config,{
+            plugins:['vux-ui']
+        })
+
         if (process.env.NODE_ENV === 'production') {
             //为生产环境修改配置
         } else {
@@ -115,10 +121,10 @@ module.exports = {
         //允许您在底层的注入workbox-webpack-plugin插件的时候支持的两种模式之间进行选择。
         //GenerateSW: (默认)，每次重新构建web应用程序时都会创建一个新的server-worker文件。
         //InjectManifest: 允许您从现有的server-worker.js文件中，并创建该文件的副本，并将“预缓存清单”注入其中。
-        workboxPluginMode: 'InjectManifest',
+        workboxPluginMode: 'GenerateSW',
         workboxOptions: {
             //在InjectManifest模式中需要使用swSrc。
-            swSrc: 'src/registerServiceWorker.js',
+            // swSrc: 'src/registerServiceWorker.js',
         }
     },
 
@@ -137,7 +143,7 @@ module.exports = {
             errors: true
         },
         //服务器接口代理
-        // proxy: ''
+        proxy: 'http://localhost:8082'
     }
 
 }
